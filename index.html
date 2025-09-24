@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Ad Automation — Product Submission</title>
+
+<style>
+  :root{
+    --bg:#0f1724;
+    --card:#0b1220;
+    --muted:#98a2b3;
+    --accent:#6ee7b7;
+    --accent-2:#60a5fa;
+    --white:#eef2ff;
+    --glass: rgba(255,255,255,0.03);
+    --radius:14px;
+    --max-width:860px;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;background:
+    linear-gradient(180deg, rgba(12,16,24,1) 0%, rgba(7,10,16,1) 100%);color:var(--white);-webkit-font-smoothing:antialiased}
+  .wrap{
+    max-width:var(--max-width);
+    margin:36px auto;
+    padding:28px;
+  }
+  header{
+    display:flex;gap:16px;align-items:center;margin-bottom:20px;
+  }
+  .logo{
+    width:56px;height:56px;border-radius:12px;background:
+    linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#022;
+    box-shadow:0 6px 20px rgba(96,165,250,0.08);
+  }
+  h1{font-size:1.5rem;margin:0}
+  p.lead{margin:6px 0 0;color:var(--muted);font-size:0.95rem}
+
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:var(--radius);
+    padding:20px;
+    box-shadow: 0 6px 30px rgba(2,6,23,0.6);
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+
+  form.grid{
+    display:grid;
+    grid-template-columns: 1fr 320px;
+    gap:18px;
+    align-items:start;
+  }
+  @media (max-width:920px){ form.grid{grid-template-columns:1fr} }
+
+  .field{display:flex;flex-direction:column;gap:8px}
+  label{font-weight:600;font-size:0.92rem}
+  input[type="text"], select, textarea{
+    background:var(--glass); border:1px solid rgba(255,255,255,0.04);
+    color:var(--white); padding:12px 14px; border-radius:10px; outline:none; font-size:0.95rem;
+  }
+  input[type="text"]:focus, textarea:focus, select:focus{box-shadow:0 6px 18px rgba(96,165,250,0.06);border-color:rgba(96,165,250,0.2)}
+  textarea{min-height:120px; resize:vertical}
+
+  .small{font-size:0.85rem;color:var(--muted)}
+
+  .right{
+    display:flex;flex-direction:column;gap:12px;
+  }
+
+  .preview{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    padding:12px;border-radius:10px;border:1px dashed rgba(255,255,255,0.03);
+    min-height:220px; display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;
+  }
+  .preview img{max-width:100%;max-height:150px;border-radius:8px;object-fit:contain}
+  .btn{
+    display:inline-flex;gap:10px;align-items:center;padding:11px 16px;border-radius:10px;border:none;cursor:pointer;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#022;font-weight:700;
+    box-shadow:0 12px 30px rgba(96,165,250,0.08);
+  }
+  .btn:active{transform:translateY(1px)}
+  .row{display:flex;gap:10px}
+  .muted-box{padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);color:var(--muted);font-size:0.9rem}
+
+  footer {margin-top:14px;color:var(--muted);font-size:0.85rem;display:flex;gap:12px;align-items:center;justify-content:space-between}
+  .notice{color:#ffd6a5}
+
+  .error{color:#ffb4b4;font-weight:600}
+  .success{color:#c7f9dd;font-weight:600}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">AD</div>
+      <div>
+        <h1>Ad Automation — Product Submission</h1>
+        <p class="lead">Add a product and automatically generate social-post ideas via your n8n webhook + Gemini. Use the preview and submit to trigger the workflow.</p>
+      </div>
+    </header>
+
+    <div class="card" role="region" aria-labelledby="form-heading">
+      <h2 id="form-heading" style="margin-top:0;">Product details</h2>
+
+      <!-- form: will POST automatically if JS disabled; JS intercepts for JSON fetch -->
+      <form id="productForm" class="grid" method="POST" action="https://meeosda3.app.n8n.cloud/webhook/f75e7acd-be2e-4141-8e33-c13c9bb7c66b" novalidate>
+        <div>
+          <div class="field">
+            <label for="productName">Product Name</label>
+            <input id="productName" name="productName" type="text" placeholder="e.g. Night Cream" required />
+            <div class="small">This name will be copied to Sheet2 for every generated idea.</div>
+          </div>
+
+          <div class="field" style="margin-top:12px">
+            <label for="imageLink">Product Image Link (Google Drive or public URL)</label>
+            <input id="imageLink" name="imageLink" type="text" placeholder="https://drive.google.com/..." required />
+            <div class="small">If using Google Drive, make sure the file is shared publicly.</div>
+          </div>
+
+          <div class="field" style="margin-top:12px">
+            <label for="language">Language</label>
+            <select id="language" name="language" aria-label="Language">
+              <option value="English">English</option>
+              <option value="Sinhala">Sinhala</option>
+              <option value="Tamil">Tamil</option>
+            </select>
+            <div class="small">Gemini will generate copy in the selected language.</div>
+          </div>
+
+          <div style="margin-top:14px" class="row">
+            <button type="submit" class="btn" id="submitBtn">Generate Ideas & Submit</button>
+            <button type="button" id="previewBtn" class="btn" style="background:transparent;color:var(--white);border:1px solid rgba(255,255,255,0.06)">Preview</button>
+          </div>
+
+          <div id="status" style="margin-top:12px"></div>
+        </div>
+
+        <aside class="right">
+          <div class="preview" id="previewBox" aria-live="polite">
+            <div style="text-align:center;color:var(--muted)">
+              <strong>Preview</strong>
+              <div class="small">Click "Preview" to fetch a couple of sample ideas locally (no webhook call).</div>
+            </div>
+            <img id="imgPreview" alt="Product preview" src="" style="display:none" />
+            <div id="ideaList" style="width:100%"></div>
+            <div style="width:100%;" class="muted-box small">Submitted items will be forwarded to your n8n webhook and then stored into Sheet2.</div>
+          </div>
+
+          <div class="muted-box small">
+            <strong>Webhook:</strong>
+            <div id="webhookHint" style="word-break:break-all">Replace form action and the <code>WEBHOOK_URL</code> in the JS with your n8n webhook URL.</div>
+          </div>
+        </aside>
+      </form>
+
+      <footer>
+        <div>Hosted on GitHub Pages • Static site → form posts to your webhook</div>
+        <div class="small">Built for n8n + Gemini integration</div>
+      </footer>
+    </div>
+  </div>
+
+<script>
+/*
+  Replace this value with your n8n webhook URL:
+  Example: https://your-n8n-host/webhook/abcd1234
+*/
+const WEBHOOK_URL = "https://meeosda3.app.n8n.cloud/webhook/f75e7acd-be2e-4141-8e33-c13c9bb7c66b";
+
+/* Utility: show status messages */
+function setStatus(text, className="") {
+  const el = document.getElementById('status');
+  el.innerHTML = text ? `<div class="${className}">${text}</div>` : "";
+}
+
+/* Image preview helper */
+function setImagePreview(url) {
+  const img = document.getElementById('imgPreview');
+  if (!url) { img.style.display = 'none'; img.src = ""; return; }
+  img.onerror = () => { img.style.display='none'; img.src=""; };
+  img.onload = () => { img.style.display='block'; };
+  img.src = url;
+}
+
+/* Local "preview" that generates mock ideas using simple templates.
+   This does NOT call the webhook or Gemini — it's just for local preview. */
+function localPreview(product, image, lang) {
+  const ideas = [
+    {
+      "Post Idea": `Introducing ${product} — your new nightly ritual for softer skin.`,
+      "CTA": "Shop now",
+      "Pain Point": "Dry or tired-looking skin"
+    },
+    {
+      "Post Idea": `${product} provides deep hydration while you sleep — wake up glowing.`,
+      "CTA": "Learn more",
+      "Pain Point": "Loss of moisture overnight"
+    }
+  ];
+  // display
+  const list = document.getElementById('ideaList');
+  list.innerHTML = ideas.map(i => `<div style="margin-bottom:10px"><strong>${i.Post Idea}</strong><div class="small">CTA: ${i.CTA} • Pain: ${i.Pain Point}</div></div>`).join('');
+}
+
+/* When user clicks Preview */
+document.getElementById('previewBtn').addEventListener('click', (e) => {
+  const product = document.getElementById('productName').value.trim();
+  const image = document.getElementById('imageLink').value.trim();
+  const language = document.getElementById('language').value;
+  if (!product) { setStatus('Please enter a Product Name to preview.', 'error'); return; }
+  setStatus('');
+  setImagePreview(image);
+  localPreview(product, image, language);
+});
+
+/* Form submit handler: send JSON to webhook via fetch.
+   Also leaves native form action in place as a fallback if JS disabled. */
+document.getElementById('productForm').addEventListener('submit', async function(evt) {
+  // prevent native submit; we will use fetch
+  evt.preventDefault();
+
+  const product = document.getElementById('productName').value.trim();
+  const image = document.getElementById('imageLink').value.trim();
+  const language = document.getElementById('language').value;
+
+  if (!product || !image) {
+    setStatus('Product Name and Image Link are required.', 'error');
+    return;
+  }
+
+  setStatus('Sending to webhook…', '');
+
+  // payload structure that n8n webhook will receive
+  const payload = {
+    "Product Name": product,
+    "Product Image Link": image,
+    "Language": language
+  };
+
+  try {
+    const res = await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      // some webhooks return 200/201 even on error; treat non-ok as error
+      const text = await res.text();
+      setStatus('Webhook error: ' + res.status + ' — ' + text, 'error');
+      return;
+    }
+
+    setImagePreview(image);
+    setStatus('Submitted successfully ✅', 'success');
+
+    // Optionally show immediate local preview (Gemini will generate real ideas later)
+    localPreview(product, image, language);
+
+    // clear form if you like:
+    // document.getElementById('productForm').reset();
+
+  } catch (err) {
+    console.error(err);
+    setStatus('Network or webhook error. Check console and webhook URL.', 'error');
+  }
+});
+</script>
+</body>
+</html>
